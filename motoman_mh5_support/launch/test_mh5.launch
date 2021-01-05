@@ -1,4 +1,3 @@
-
 <launch>
 	<include file="$(find motoman_mh5_support)/launch/load_mh5.launch" />
 	<node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
