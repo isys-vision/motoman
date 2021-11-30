@@ -54,7 +54,7 @@ bool MotomanIORelay::init(int default_port)
   // TODO( ): should really use a private NodeHandle here
   if (!ros::param::param<int>(port_param_name, port, default_port))
   {
-    ROS_WARN_STREAM_NAMED("io.init", "Failed to get '" << port_param_name
+    ROS_INFO_STREAM_NAMED("io.init", "Failed to get '" << port_param_name
       << "' parameter: using default (" << default_port << ")");
   }
   if (port < 0 || port > std::numeric_limits<uint16_t>::max())
