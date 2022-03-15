@@ -756,4 +756,3 @@ void JointTrajectoryInterface::jointStateCB(
 
 }  // namespace joint_trajectory_interface
 }   // namespace industrial_robot_client
-
