@@ -15,5 +15,5 @@
   <node if="$(arg use_bswap)" name="motion_streaming_interface"
         pkg="motoman_driver" type="motion_streaming_interface_bswap" />
   <node unless="$(arg use_bswap)" name="motion_streaming_interface"
-        pkg="motoman_driver" type="motion_streaming_interface" />
+        pkg="motoman_driver" type="motion_streaming_interface" respawn="true" />
 </launch>

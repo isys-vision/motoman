@@ -85,7 +85,11 @@ bool MotomanMotionCtrl::setTrajMode(bool enable)
 
   if (reply.getResult() != MotionReplyResults::SUCCESS)
   {
-    ROS_ERROR_STREAM("Failed to set TrajectoryMode: " << getErrorString(reply));
+    std::string errMsg(getErrorString(reply));
+    ROS_ERROR_STREAM("Failed to set TrajectoryMode: " << errMsg);
+    if (errMsg.find("Waiting on ROS (5009)") != std::string::npos) {
+      throw std::runtime_error("respawn motoman streaming interface, controller was not ready: Waiting on ROS (5009)");
+    }
     return false;
   }
 
