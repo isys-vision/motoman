@@ -60,8 +60,8 @@ namespace joint_trajectory_streamer
 namespace
 {
   const double pos_stale_time_ = 1.0;  // max time since last "current position" update, for validation (sec)
-  const double start_pos_tol_  = 1e-4;  // max difference btwn start & current position, for validation (rad)
-  const double replace_start_pos_tol_  = 0.02;  // default tolerance 1e-4 found to be too strict for some manipulators
+  double start_pos_tol_  = 1e-4;  // max difference btwn start & current position, for validation (rad)
+  double replace_start_pos_tol_  = 0.02;  // default tolerance 1e-4 found to be too strict for some manipulators
 }
 
 #define ROS_ERROR_RETURN(rtn, ...) do {ROS_ERROR(__VA_ARGS__); return(rtn);} while (0)  // NOLINT(whitespace/braces)
@@ -88,6 +88,11 @@ bool MotomanJointTrajectoryStreamer::init(SmplMsgConnection* connection, const s
     motion_ctrl_map_[robot_id] = motion_ctrl;
   }
 
+  // init start position tolerance from param
+  node_.param("start_pos_tol", start_pos_tol_, start_pos_tol_);
+  node_.param("replace_start_pos_tol", replace_start_pos_tol_, replace_start_pos_tol_);
+  ROS_INFO("Using start position tolerance of %f, replacing start position if within %f", start_pos_tol_, replace_start_pos_tol_);
+
   disabler_ = node_.advertiseService("robot_disable", &MotomanJointTrajectoryStreamer::disableRobotCB, this);
 
   enabler_ = node_.advertiseService("robot_enable", &MotomanJointTrajectoryStreamer::enableRobotCB, this);
@@ -110,6 +115,11 @@ bool MotomanJointTrajectoryStreamer::init(SmplMsgConnection* connection, const s
   // try to read robot_id parameter, if none specified
   if ((robot_id_ < 0))
     node_.param("robot_id", robot_id_, 0);
+
+  // init start position tolerance from param
+  node_.param("start_pos_tol", start_pos_tol_, start_pos_tol_);
+  node_.param("replace_start_pos_tol", replace_start_pos_tol_, replace_start_pos_tol_);
+  ROS_INFO("Using start position tolerance of %f, replacing start position if within %f", start_pos_tol_, replace_start_pos_tol_);
 
   rtn &= motion_ctrl_.init(connection, robot_id_);
 
