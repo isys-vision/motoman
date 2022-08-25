@@ -44,7 +44,11 @@ int main(int argc, char** argv)
   // launch the FS100 JointTrajectoryStreamer connection/handlers
   MotomanJointTrajectoryStreamer motionInterface;
 
-  motionInterface.init("", FS100_motion_port, false);
+  bool isOk = motionInterface.init("", FS100_motion_port, false);
+  if (!isOk) {
+    ROS_ERROR_STREAM("joint_trajectory_streamer: init failed, respawning");
+    throw std::runtime_error("respawn motoman streaming interface, controller was not initialised");
+  }
   motionInterface.run();
 
   return 0;
