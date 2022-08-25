@@ -80,7 +80,7 @@ bool MotomanMotionCtrl::setTrajMode(bool enable)
   if (!sendAndReceive(cmd, reply))
   {
     ROS_ERROR("Failed to send TRAJ_MODE command");
-    return false;
+    throw std::runtime_error("Failed to send TRAJ_MODE command");
   }
 
   if (reply.getResult() != MotionReplyResults::SUCCESS)
