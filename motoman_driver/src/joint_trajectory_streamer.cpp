@@ -60,7 +60,8 @@ namespace joint_trajectory_streamer
 namespace
 {
   const double pos_stale_time_ = 1.0;  // max time since last "current position" update, for validation (sec)
-  const double start_pos_tol_  = 1e-2;  // max difference btwn start & current position, for validation (rad), was 1e-4 by default
+  const double start_pos_tol_  = 1e-2;  // max difference btwn start & current position, for validation (rad)
+                                        // default tolerance 1e-4 found to be too strict for some manipulators
 }
 
 #define ROS_ERROR_RETURN(rtn, ...) do {ROS_ERROR(__VA_ARGS__); return(rtn);} while (0)  // NOLINT(whitespace/braces)
@@ -597,7 +598,8 @@ bool MotomanJointTrajectoryStreamer::is_valid(const trajectory_msgs::JointTrajec
                                 traj.joint_names, traj.points[0].positions,
                                 start_pos_tol_))
   {
-    ROS_ERROR_RETURN(false, "Validation failed: Trajectory doesn't start at current position. cur_joint_pos_.name.size: %lu, traj.joint_names.size: %lu", cur_joint_pos_.name.size(), traj.joint_names.size());
+    ROS_ERROR_RETURN(false, "Validation failed: Trajectory doesn't start at current position. cur_joint_pos_.name.size:"
+        " %lu, traj.joint_names.size: %lu", cur_joint_pos_.name.size(), traj.joint_names.size());
   }
   return true;
 }
@@ -627,7 +629,9 @@ bool MotomanJointTrajectoryStreamer::is_valid(const motoman_msgs::DynamicJointTr
                                     traj.joint_names, traj.points[0].groups[gr].positions,
                                     start_pos_tol_))
       {
-        ROS_ERROR_RETURN(false, "Validation failed: Trajectory doesn't start at current position. group: %d, cur_joint_pos_.name.size: %lu, traj.joint_names.size: %lu", group_number, cur_joint_pos_.name.size(), traj.joint_names.size());
+        ROS_ERROR_RETURN(false, "Validation failed: Trajectory doesn't start at current position. group: %d, "
+            "cur_joint_pos_.name.size: %lu, traj.joint_names.size: %lu",
+            group_number, cur_joint_pos_.name.size(), traj.joint_names.size());
       }
     }
   }
