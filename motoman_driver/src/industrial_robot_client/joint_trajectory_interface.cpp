@@ -239,8 +239,8 @@ void JointTrajectoryInterface::jointTrajectoryExCB(
   }
 
   // convert trajectory into robot-format
+  motoman_msgs::DynamicJointTrajectoryPtr trajs = boost::make_shared<motoman_msgs::DynamicJointTrajectory>(*msg);
   std::vector<SimpleMessage> robot_msgs;
-  motoman_msgs::DynamicJointTrajectoryPtr trajs = boost::make_shared<motoman_msgs::DynamicJointTrajectory>(*boost::const_pointer_cast<motoman_msgs::DynamicJointTrajectory>(msg));
   if (!trajectory_to_msgs(trajs, &robot_msgs))
     return;
 
@@ -263,7 +263,7 @@ void JointTrajectoryInterface::jointTrajectoryCB(
   }
 
   // convert trajectory into robot-format
-  trajectory_msgs::JointTrajectoryPtr traj = boost::make_shared<trajectory_msgs::JointTrajectory>(*boost::const_pointer_cast<trajectory_msgs::JointTrajectory>(msg));
+  trajectory_msgs::JointTrajectoryPtr traj = boost::make_shared<trajectory_msgs::JointTrajectory>(*msg);
   std::vector<SimpleMessage> robot_msgs;
   if (!trajectory_to_msgs(traj, &robot_msgs))
     return;
