@@ -122,7 +122,8 @@ target_link_libraries(motoman_simple_message
 add_library(motoman_industrial_robot_client ${CLIENT_SRC_FILES})
 target_link_libraries(motoman_industrial_robot_client
   industrial_robot_client
-  industrial_utils)
+  industrial_utils
+  simple_message)
 add_dependencies(motoman_industrial_robot_client ${catkin_EXPORTED_TARGETS})
 target_compile_definitions(motoman_industrial_robot_client PUBLIC ${industrial_robot_client_DEFINITIONS})
 
