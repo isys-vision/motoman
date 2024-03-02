@@ -430,6 +430,7 @@ bool MotomanJointTrajectoryStreamer::send_to_robot(const std::vector<SimpleMessa
     ROS_ERROR_RETURN(false, "Failed to initialize MotoRos motion, trajectory execution ABORTED. If safe, call the "
                             "'robot_enable' service to (re-)enable Motoplus motion and retry.");
 
+  ROS_INFO("MotomanJointTrajectoryStreamer::send_to_robot calling JointTrajectoryStreamer::send_to_robot");
   return JointTrajectoryStreamer::send_to_robot(messages);
 }
 
