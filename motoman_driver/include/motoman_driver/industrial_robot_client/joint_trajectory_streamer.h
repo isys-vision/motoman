@@ -37,6 +37,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <atomic>
 
 namespace industrial_robot_client
 {
@@ -49,7 +50,7 @@ using industrial::smpl_msg_connection::SmplMsgConnection;
 
 namespace TransferStates
 {
-enum TransferState
+enum TransferState : int
 {
   IDLE = 0, STREAMING = 1  // ,STARTING, //, STOPPING
 };
@@ -133,7 +134,7 @@ protected:
   boost::mutex mutex_;
   int current_point_;
   std::vector<SimpleMessage> current_traj_;
-  TransferState state_;
+  std::atomic<TransferState> state_;
   ros::Time streaming_start_;
   int min_buffer_size_;
 };
