@@ -160,7 +160,19 @@ bool JointRelayHandler::create_messages(SimpleMessage& msg_in,
   sensor_state->velocity = pub_joint_state.velocities;
 
   this->pub_joint_control_state_.publish(*control_state);
-  this->pub_joint_sensor_state_.publish(*sensor_state);
+
+  bool isLinearAxis = true;
+  size_t N = pub_joint_state.positions.size();
+  for (size_t idx = 1; idx < N; idx++) {
+      if (pub_joint_state.positions[idx] > 0 | pub_joint_state.positions[idx] < 0) {
+          isLinearAxis = false;
+          break;
+      }
+  }
+
+  if (!isLinearAxis) {
+      this->pub_joint_sensor_state_.publish(*sensor_state);
+  }
 
   return true;
 }
