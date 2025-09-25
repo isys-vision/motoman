@@ -783,6 +783,13 @@ BOOL Ros_MotionServer_ServoPower(Controller* controller, int servoOnOff)
 
 	if (servoOnOff == ON)
 	{
+
+		//TODO: check if something prohibits Servo On:
+		// 		External Servo Off 1-3:
+		//		 	#40054 SIN#037
+		// 			#40065 SIN#046
+		// 			#40066 SIN#047
+
 		status = Ros_MotionServer_DisableEcoMode(controller);
 		if (status == NG)
 		{
@@ -975,6 +982,12 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 	{
 		MP_SERVO_POWER_SEND_DATA sServoData;
 		memset(&sServoData, 0x00, sizeof(sServoData));
+
+		//TODO: check if something prohibits Servo On:
+		// 		External Servo Off 1-3:
+		//		 	#40054 SIN#037
+		// 			#40065 SIN#046
+		// 			#40066 SIN#047
 
 		status = Ros_MotionServer_DisableEcoMode(controller);
 		if (status == NG)
