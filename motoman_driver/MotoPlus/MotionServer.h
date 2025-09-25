@@ -33,8 +33,8 @@
 #define MOTIONSERVER_H
 
 #define MOTION_STOP_TIMEOUT			20
-#define MOTION_START_TIMEOUT		5000  // in milliseconds
-#define MOTION_START_CHECK_PERIOD	50  // in millisecond
+#define MOTION_START_TIMEOUT		2500  // in milliseconds
+#define MOTION_START_CHECK_PERIOD	25    // in millisecond
 #define MOTION_INIT_ROS_JOB			"INIT_ROS"
 
 #define MAX_TRAJECTORY_TIME_LENGTH	14400.0f //seconds (4 hours)
