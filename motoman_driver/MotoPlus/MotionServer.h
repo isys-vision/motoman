@@ -50,6 +50,10 @@
 #define E_EXRCS_UNDER_ENERGY_SAVING (-20)
 #endif
 
+#ifndef E_EXRCS_INFORM_NOT_ON_WAIT
+#define E_EXRCS_INFORM_NOT_ON_WAIT (-1)
+#endif
+
 extern void Ros_MotionServer_StartNewConnection(Controller* controller, int sd);
 extern BOOL Ros_MotionServer_HasDataInQueue(Controller* controller);
 extern BOOL Ros_MotionServer_ClearQ_All(Controller* controller);
