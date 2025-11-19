@@ -2016,6 +2016,11 @@ void Ros_MotionServer_IncMoveLoopStart(Controller* controller) //<-- IP_CLK prio
 #else
 			// Send pulse increment to the controller command position
 			ret = mpExRcsIncrementMove(&moveData);
+			if (ret == E_EXRCS_IMOV_UNREADY && !controller->bPFLEnabled) {
+				// happens always during statup; sleep 50ms, try again
+				Ros_Sleep(2*MOTION_START_CHECK_PERIOD);
+				ret = mpExRcsIncrementMove(&moveData);
+			}
 			if(ret != 0)
 			{
 				// Failure: command rejected by controller
@@ -2030,8 +2035,20 @@ void Ros_MotionServer_IncMoveLoopStart(Controller* controller) //<-- IP_CLK prio
 					// Check if this is caused by a known cause (E-Stop, Hold, Alarm, Error)
 					if ( !Ros_Controller_IsEStop(controller) && !Ros_Controller_IsHold(controller) 
 						&& !Ros_Controller_IsAlarm(controller) && !Ros_Controller_IsError(controller) ) {
-						printf("mpExRcsIncrementMove returned UNREADY: %d (Could be PFL Active)\r\n", E_EXRCS_IMOV_UNREADY);
+						printf("mpExRcsIncrementMove returned UNREADY: %d (Could be PFL Active, or Inform not executing WAIT)\r\n", E_EXRCS_IMOV_UNREADY);
 						controller->bPFLduringRosMove = TRUE;
+					} else {
+						printf("mpExRcsIncrementMove returned UNREADY: %d EStop / Hold / Alarm / IsError Active\r\n", E_EXRCS_IMOV_UNREADY);
+					}
+				}
+				else if (ret == E_EXRCS_IMOV_UNREADY && !controller->bPFLEnabled )
+				{
+					// Check if this is caused by a known cause (E-Stop, Hold, Alarm, Error)
+					if ( !Ros_Controller_IsEStop(controller) && !Ros_Controller_IsHold(controller) 
+						&& !Ros_Controller_IsAlarm(controller) && !Ros_Controller_IsError(controller) ) {
+						printf("mpExRcsIncrementMove returned UNREADY: %d Is Inform not executing WAIT?\r\n", E_EXRCS_IMOV_UNREADY);
+					} else {
+						printf("mpExRcsIncrementMove returned UNREADY: %d EStop / Hold / Alarm / IsError Active\r\n", E_EXRCS_IMOV_UNREADY);
 					}
 				}
 				else if (ret == E_EXRCS_PFL_FUNC_BUSY && controller->bPFLEnabled)
