@@ -1,0 +1,212 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:property name="color_blue_transparent" value="${33/255} ${38/255} ${191/255} 0.4"/>
+  <xacro:macro name="material_blue_transparent">
+    <material name="">
+      <color rgba="${color_blue_transparent}"/>
+    </material>
+  </xacro:macro>
+
+  <xacro:macro name="motoman_pl190" params="prefix">
+    <xacro:include filename="$(find motoman_resources)/urdf/common_materials.xacro"/>
+
+    <!-- link list -->
+    <link name="${prefix}base_link">
+      <visual>
+        <geometry>
+          <mesh filename="package://motoman_pl190_support/meshes/pl190/visual/base_link.stl"/>
+        </geometry>
+        <xacro:material_yaskawa_blue/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://motoman_pl190_support/meshes/pl190/collision/base_link.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    <link name="${prefix}link_1_s">
+      <visual>
+        <geometry>
+          <mesh filename="package://motoman_pl190_support/meshes/pl190/visual/link_1_s.stl"/>
+        </geometry>
+        <xacro:material_yaskawa_blue/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://motoman_pl190_support/meshes/pl190/collision/link_1_s.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    <link name="${prefix}link_2_l">
+      <visual>
+        <geometry>
+          <mesh filename="package://motoman_pl190_support/meshes/pl190/visual/link_2_l.stl"/>
+        </geometry>
+        <xacro:material_yaskawa_blue/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://motoman_pl190_support/meshes/pl190/collision/link_2_l.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    <link name="${prefix}link_3_u">
+      <visual>
+        <geometry>
+          <mesh filename="package://motoman_pl190_support/meshes/pl190/visual/link_3_u.stl"/>
+        </geometry>
+        <xacro:material_yaskawa_blue/>
+      </visual>
+      <visual>
+        <origin xyz="-0.3 0.2 0.6" rpy="0 0 0" />
+        <geometry>
+          <cylinder length="1.45" radius="0.10"/>
+        </geometry>
+        <xacro:material_blue_transparent/>
+      </visual>
+      <visual>
+        <origin xyz="-0.1 0.3 0.1" rpy="0 0 0" />
+        <geometry>
+          <box size="0.5 0.2 0.8"/>
+        </geometry>
+        <xacro:material_blue_transparent/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://motoman_pl190_support/meshes/pl190/collision/link_3_u.stl"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="-0.3 0.2 0.6" rpy="0 0 0" />
+        <geometry>
+          <cylinder length="1.45" radius="0.10"/>
+        </geometry>
+        <xacro:material_blue_transparent/>
+      </collision>
+      <collision>
+        <origin xyz="-0.1 0.3 0.1" rpy="0 0 0" />
+        <geometry>
+          <box size="0.5 0.2 0.8"/>
+        </geometry>
+        <xacro:material_blue_transparent/>
+      </collision>
+    </link>
+    <link name="${prefix}link_4_r">
+      <!-- virtual -->
+    </link>
+    <link name="${prefix}link_5_b">
+      <!-- virtual -->
+    </link>
+    <link name="${prefix}link_5_b_2">
+      <visual>
+        <geometry>
+          <mesh filename="package://motoman_pl190_support/meshes/pl190/visual/link_5_b.stl"/>
+        </geometry>
+        <xacro:material_yaskawa_blue/>
+      </visual>
+      <visual>
+        <origin xyz="-0.25 0.125 0.38" rpy="0 0 0" />
+        <geometry>
+          <box size="0.25 0.25 0.25"/>
+        </geometry>
+        <xacro:material_blue_transparent/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://motoman_pl190_support/meshes/pl190/collision/link_5_b.stl"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="-0.25 0.125 0.38" rpy="0 0 0" />
+        <geometry>
+          <box size="0.25 0.25 0.25"/>
+        </geometry>
+        <xacro:material_blue_transparent/>
+      </collision>
+    </link>
+    <link name="${prefix}link_6_t">
+      <visual>
+        <geometry>
+          <mesh filename="package://motoman_pl190_support/meshes/pl190/visual/link_6_t.stl"/>
+        </geometry>
+        <xacro:material_yaskawa_blue/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://motoman_pl190_support/meshes/pl190/collision/link_6_t.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    <!-- end of link list -->
+
+    <!-- joint list -->
+    <joint name="${prefix}joint_1_s" type="revolute">
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}link_1_s"/>
+      <origin xyz="0 0 0.880" rpy="0 0 0" />
+      <axis xyz="0 0 1" />
+      <limit lower="${radians(-180)}" upper="${radians(180)}" effort="4903.32" velocity="${radians(140)}"/>
+    </joint>
+    <joint name="${prefix}joint_2_l" type="revolute">
+      <parent link="${prefix}link_1_s"/>
+      <child link="${prefix}link_2_l"/>
+      <origin xyz="0.270 0 0" rpy="0 0 0" />
+      <axis xyz="0 1 0" />
+      <limit lower="${radians(-45)}" upper="${radians(90)}" effort="7353.05" velocity="${radians(145)}"/>
+    </joint>
+    <joint name="${prefix}joint_3_u" type="revolute">
+      <parent link="${prefix}link_2_l"/>
+      <child link="${prefix}link_3_u"/>
+      <origin xyz="0 0 1.250" rpy="0 ${radians(90)} 0" />
+      <axis xyz="0 -1 0" />
+      <limit lower="${radians(-120)}" upper="${radians(15.5)}" effort="3432.33" velocity="${radians(145)}"/>
+    </joint>
+    <joint name="${prefix}joint_4_r" type="fixed">
+      <parent link="${prefix}link_3_u"/>
+      <child link="${prefix}link_4_r"/>
+      <origin xyz="0 0 1.400" rpy="0 0 0" />
+    </joint>
+    <joint name="${prefix}joint_5_b" type="revolute">
+      <parent link="${prefix}link_4_r"/>
+      <child link="${prefix}link_5_b"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <axis xyz="0 -1 0" />
+      <limit lower="${radians(-125)}" upper="${radians(125)}" effort="794.34" velocity="${radians(145)}"/>
+      <mimic multiplier="-1" offset="0" joint="joint_3_u"/>
+    </joint>
+    <joint name="${prefix}joint_5_b_2" type="revolute">
+      <parent link="${prefix}link_5_b"/>
+      <child link="${prefix}link_5_b_2"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <axis xyz="0 -1 0" />
+      <limit lower="${radians(-125)}" upper="${radians(125)}" effort="794.34" velocity="${radians(145)}"/>
+      <mimic multiplier="1" offset="0" joint="joint_2_l"/>
+    </joint>
+    <joint name="${prefix}joint_6_t" type="revolute">
+      <parent link="${prefix}link_5_b_2"/>
+      <child link="${prefix}link_6_t"/>
+      <!-- uses offset 0.022 for J6 <-> tool0 measured from CAD -->
+      <origin xyz="${0.267 - 0.022} 0 0.250" rpy="0 0 0" />
+      <axis xyz="-1 0 0" />
+      <limit lower="${radians(-360)}" upper="${radians(360)}" effort="375.1" velocity="${radians(420)}"/>
+    </joint>
+    <!-- end of joint list -->
+
+    <!-- ROS base_link to Robot Manufacturer World Coordinates transform -->
+    <link name="${prefix}base" />
+    <joint name="${prefix}base_link-base" type="fixed">
+      <origin xyz="0 0 0.540" rpy="0 0 0"/>
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}base"/>
+    </joint>
+
+    <!-- ROS-Industrial 'tool0' frame: all-zeros tool frame -->
+    <link name="${prefix}tool0"/>
+    <joint name="${prefix}joint_6_t-tool0" type="fixed">
+      <!-- offset 0.022 measured from CAD -->
+      <origin xyz="0.022 0 0" rpy="${radians(180)} ${radians(-90)} 0"/>
+      <parent link="${prefix}link_6_t"/>
+      <child link="${prefix}tool0"/>
+    </joint>
+  </xacro:macro>
+</robot>
