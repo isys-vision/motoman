@@ -58,8 +58,10 @@ BOOL Ros_Controller_IsRemote(Controller* controller);
 BOOL Ros_Controller_IsOperating(Controller* controller);
 BOOL Ros_Controller_IsHold(Controller* controller);
 BOOL Ros_Controller_IsServoOn(Controller* controller);
+BOOL Ros_Controller_IsExtServoOff1(Controller* controller);
 BOOL Ros_Controller_IsEStop(Controller* controller);
 BOOL Ros_Controller_IsWaitingRos(Controller* controller);
+BOOL Ros_Controller_IsRosDone(Controller* controller);
 int Ros_Controller_GetNotReadySubcode(Controller* controller);
 int Ros_Controller_StatusToMsg(Controller* controller, SimpleMsg* sendMsg);
 BOOL Ros_Controller_StatusRead(Controller* controller, USHORT ioStatus[IO_ROBOTSTATUS_MAX]);
@@ -447,10 +449,12 @@ void Ros_Controller_StatusInit(Controller* controller)
 	controller->ioStatusAddr[IO_ROBOTSTATUS_OPERATING].ulAddr = 50070;			// Operating
 	controller->ioStatusAddr[IO_ROBOTSTATUS_HOLD].ulAddr = 50071;				// Hold
 	controller->ioStatusAddr[IO_ROBOTSTATUS_SERVO].ulAddr = 50073;   			// Servo ON
+	controller->ioStatusAddr[IO_ROBOTSTATUS_EXT_SERVO_OFF1].ulAddr = 40065;   	// EXT Servo OFF 1
 	controller->ioStatusAddr[IO_ROBOTSTATUS_ESTOP_EX].ulAddr = 80025;   		// External E-Stop
 	controller->ioStatusAddr[IO_ROBOTSTATUS_ESTOP_PP].ulAddr = 80026;   		// Pendant E-Stop
 	controller->ioStatusAddr[IO_ROBOTSTATUS_ESTOP_CTRL].ulAddr = 80027;   		// Controller E-Stop
 	controller->ioStatusAddr[IO_ROBOTSTATUS_WAITING_ROS].ulAddr = IO_FEEDBACK_WAITING_MP_INCMOVE; // Job input signaling ready for external motion
+	controller->ioStatusAddr[IO_ROBOTSTATUS_ROS_DONE].ulAddr = IO_FEEDBACK_MP_INCMOVE_DONE; // Job input signaling external motion done
 	controller->ioStatusAddr[IO_ROBOTSTATUS_INECOMODE].ulAddr = 50727;			// Energy Saving Mode
 #if (YRC1000||YRC1000u)
 	controller->ioStatusAddr[IO_ROBOTSTATUS_PFL_STOP].ulAddr = 81702;			// PFL function stopped the motion
@@ -506,6 +510,12 @@ BOOL Ros_Controller_IsServoOn(Controller* controller)
 	return ((controller->ioStatus[IO_ROBOTSTATUS_SERVO] != 0) && (controller->ioStatus[IO_ROBOTSTATUS_INECOMODE] == 0));
 }
 
+BOOL Ros_Controller_IsExtServoOff1(Controller* controller)
+{
+	return (controller->ioStatus[IO_ROBOTSTATUS_EXT_SERVO_OFF1] != 0);
+}
+
+
 BOOL Ros_Controller_IsEcoMode(Controller* controller)
 {
 	return (controller->ioStatus[IO_ROBOTSTATUS_INECOMODE] != 0);
@@ -521,6 +531,11 @@ BOOL Ros_Controller_IsEStop(Controller* controller)
 BOOL Ros_Controller_IsWaitingRos(Controller* controller)
 {
 	return ((controller->ioStatus[IO_ROBOTSTATUS_WAITING_ROS]!=0));
+}
+
+BOOL Ros_Controller_IsRosDone(Controller* controller)
+{
+	return ((controller->ioStatus[IO_ROBOTSTATUS_ROS_DONE]!=0));
 }
 
 BOOL Ros_Controller_IsMotionReady(Controller* controller)
