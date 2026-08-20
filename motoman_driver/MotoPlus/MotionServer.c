@@ -1241,6 +1241,7 @@ int Ros_MotionServer_InitTrajPointFull(CtrlGroup* ctrlGroup, SmBodyJointTrajPtFu
 			if(abs(pulsePos[i] - curPos[i]) > START_MAX_PULSE_DEVIATION)
 			{
 				printf("ERROR: Trajectory start position doesn't match current position (MOTO joint order).\r\n");
+				//TODO: use ctrlGroup to convert these values to rad (and deg)
 				printf(" - Requested start: %ld, %ld, %ld, %ld, %ld, %ld, %ld, %ld\r\n",
 					pulsePos[0], pulsePos[1], pulsePos[2],
 					pulsePos[3], pulsePos[4], pulsePos[5],
