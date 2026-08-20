@@ -894,7 +894,6 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 {
 	int ret;
 	MP_STD_RSP_DATA rData;
-#define NO_MPSTARTJOB
 #ifndef NO_MPSTARTJOB
 	MP_START_JOB_SEND_DATA sStartData;
 #endif
@@ -973,6 +972,10 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 	// Servo On
 	if(Ros_Controller_IsServoOn(controller) == FALSE)
 	{
+		// Avoid servo 'clicking' when we should not take control
+		if (Ros_Controller_IsRosDone(controller) || Ros_Controller_IsExtServoOff1(controller))
+			return FALSE;
+
 		MP_SERVO_POWER_SEND_DATA sServoData;
 		memset(&sServoData, 0x00, sizeof(sServoData));
 
