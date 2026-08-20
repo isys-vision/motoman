@@ -542,9 +542,12 @@ BOOL Ros_Controller_IsMotionReady(Controller* controller)
 {
 	BOOL bMotionReady;
 	
-#ifndef DUMMY_SERVO_MODE	
+#ifndef DUMMY_SERVO_MODE
+	// check ROS_DONE == 0
+	// check explicitly that ROS_READY == 1
 	bMotionReady = controller->bRobotJobReady && Ros_Controller_IsOperating(controller) && Ros_Controller_IsRemote(controller)
-		&& !Ros_Controller_IsPflActive(controller) && !controller->bMpIncMoveError && !controller->bStopMotion;
+		&& !Ros_Controller_IsPflActive(controller) && !controller->bMpIncMoveError && !controller->bStopMotion
+		&& Ros_Controller_IsWaitingRos(controller) && !Ros_Controller_IsRosDone(controller);
 #else
 	bMotionReady = controller->bRobotJobReady && Ros_Controller_IsOperating(controller);
 #endif
