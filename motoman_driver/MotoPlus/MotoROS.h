@@ -32,8 +32,8 @@
 #ifndef MOTOROS_H
 #define MOTOROS_H
 
-#define NO_MPSTARTJOB
-#define APPLICATION_VERSION					"1.9.12.4"
+// #define NO_MPSTARTJOB
+#define APPLICATION_VERSION					"1.9.12.5"
 
 #include "MotoPlus.h"
 #include "ParameterExtraction.h"
