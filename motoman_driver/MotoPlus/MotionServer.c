@@ -901,7 +901,7 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 	int grpNo;
 	STATUS status;
 
-	printf("In StartTrajMode\r\n");
+	printf("StartTrajMode:\r\n");
 
 	// Update status
 	Ros_Controller_StatusUpdate(controller);
@@ -915,8 +915,10 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 		controller->bMpIncMoveError = FALSE;
 
 	// Check if already in the proper mode
-	if(Ros_Controller_IsMotionReady(controller))
+	if(Ros_Controller_IsMotionReady(controller)) {
+		printf("Already IsMotionReady\r\n");
 		return TRUE;
+	}
 
 	// Check if currently in operation, we don't want to interrupt current operation
 	if(Ros_Controller_IsOperating(controller))
