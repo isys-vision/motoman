@@ -736,7 +736,8 @@ BOOL Ros_Controller_StatusUpdate(Controller* controller)
 		{
 			if(controller->ioStatus[i] != ioStatus[i])
 			{
-				//printf("Change of ioStatus[%d]\r\n", i);
+				//TODO comment out
+				printf("Change of ioStatus[%d]\r\n", i);
 				
 				controller->ioStatus[i] = ioStatus[i];
 				switch(i)
