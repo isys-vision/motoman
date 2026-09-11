@@ -894,7 +894,6 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 {
 	int ret;
 	MP_STD_RSP_DATA rData;
-#define NO_MPSTARTJOB
 #ifndef NO_MPSTARTJOB
 	MP_START_JOB_SEND_DATA sStartData;
 #endif
@@ -902,7 +901,7 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 	int grpNo;
 	STATUS status;
 
-	printf("In StartTrajMode\r\n");
+	printf("StartTrajMode:\r\n");
 
 	// Update status
 	Ros_Controller_StatusUpdate(controller);
@@ -916,8 +915,10 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 		controller->bMpIncMoveError = FALSE;
 
 	// Check if already in the proper mode
-	if(Ros_Controller_IsMotionReady(controller))
+	if(Ros_Controller_IsMotionReady(controller)) {
+		printf("Already IsMotionReady\r\n");
 		return TRUE;
+	}
 
 	// Check if currently in operation, we don't want to interrupt current operation
 	if(Ros_Controller_IsOperating(controller))
@@ -973,6 +974,10 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 	// Servo On
 	if(Ros_Controller_IsServoOn(controller) == FALSE)
 	{
+		// Avoid servo 'clicking' when we should not take control
+		if (Ros_Controller_IsRosDone(controller) || Ros_Controller_IsExtServoOff1(controller))
+			return FALSE;
+
 		MP_SERVO_POWER_SEND_DATA sServoData;
 		memset(&sServoData, 0x00, sizeof(sServoData));
 
@@ -1241,6 +1246,7 @@ int Ros_MotionServer_InitTrajPointFull(CtrlGroup* ctrlGroup, SmBodyJointTrajPtFu
 			if(abs(pulsePos[i] - curPos[i]) > START_MAX_PULSE_DEVIATION)
 			{
 				printf("ERROR: Trajectory start position doesn't match current position (MOTO joint order).\r\n");
+				//TODO: use ctrlGroup to convert these values to rad (and deg)
 				printf(" - Requested start: %ld, %ld, %ld, %ld, %ld, %ld, %ld, %ld\r\n",
 					pulsePos[0], pulsePos[1], pulsePos[2],
 					pulsePos[3], pulsePos[4], pulsePos[5],

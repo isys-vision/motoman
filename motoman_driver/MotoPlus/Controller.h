@@ -105,6 +105,8 @@ typedef enum
 	IO_ROBOTSTATUS_PFL_AVOID_JOINT,
 	IO_ROBOTSTATUS_PFL_AVOID_TRANS,
 #endif
+	IO_ROBOTSTATUS_ROS_DONE,
+	IO_ROBOTSTATUS_EXT_SERVO_OFF1,
 	IO_ROBOTSTATUS_MAX
 } IoStatusIndex;
  
@@ -164,9 +166,11 @@ extern BOOL Ros_Controller_IsRemote(Controller* controller);
 extern BOOL Ros_Controller_IsOperating(Controller* controller);
 extern BOOL Ros_Controller_IsHold(Controller* controller);
 extern BOOL Ros_Controller_IsServoOn(Controller* controller);
+extern BOOL Ros_Controller_IsExtServoOff1(Controller* controller);
 extern BOOL Ros_Controller_IsEcoMode(Controller* controller);
 extern BOOL Ros_Controller_IsEStop(Controller* controller);
 extern BOOL Ros_Controller_IsWaitingRos(Controller* controller);
+extern BOOL Ros_Controller_IsRosDone(Controller* controller);
 extern BOOL Ros_Controller_IsMotionReady(Controller* controller);
 extern BOOL Ros_Controller_IsPflActive(Controller* controller);
 extern int Ros_Controller_GetNotReadySubcode(Controller* controller);
