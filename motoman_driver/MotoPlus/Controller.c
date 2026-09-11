@@ -802,8 +802,11 @@ BOOL Ros_Controller_StatusUpdate(Controller* controller)
 			}
 		}
 
-		if (!prevReadyStatus && Ros_Controller_IsMotionReady(controller))
-			printf("Robot job is ready for ROS commands.\r\n");
+		BOOL readyStatus = Ros_Controller_IsMotionReady(controller)
+		if (!prevReadyStatus && readyStatus)
+			printf("StatusUpdate: Robot job is ready for ROS commands\r\n");
+		else if (prevReadyStatus && !readyStatus)
+			printf("StatusUpdate: Robot job is not ready anymore\r\n");
 
 		return TRUE;
 	}
@@ -945,7 +948,7 @@ void Ros_Controller_ListenForSkill(Controller* controller, int sl)
 #endif
 
 			if(Ros_Controller_IsMotionReady(controller))
-				printf("Robot job is ready for ROS commands.\r\n");
+				printf("ListenForSkill: Robot job is ready for ROS commands\r\n");
 			break;
 			
 		case MP_SKILL_END:
