@@ -58,8 +58,10 @@ BOOL Ros_Controller_IsRemote(Controller* controller);
 BOOL Ros_Controller_IsOperating(Controller* controller);
 BOOL Ros_Controller_IsHold(Controller* controller);
 BOOL Ros_Controller_IsServoOn(Controller* controller);
+BOOL Ros_Controller_IsExtServoOff1(Controller* controller);
 BOOL Ros_Controller_IsEStop(Controller* controller);
 BOOL Ros_Controller_IsWaitingRos(Controller* controller);
+BOOL Ros_Controller_IsRosDone(Controller* controller);
 int Ros_Controller_GetNotReadySubcode(Controller* controller);
 int Ros_Controller_StatusToMsg(Controller* controller, SimpleMsg* sendMsg);
 BOOL Ros_Controller_StatusRead(Controller* controller, USHORT ioStatus[IO_ROBOTSTATUS_MAX]);
@@ -436,22 +438,24 @@ closeSockHandle:
 //-------------------------------------------------------------------
 void Ros_Controller_StatusInit(Controller* controller)
 {
-	controller->ioStatusAddr[IO_ROBOTSTATUS_ALARM_MAJOR].ulAddr = 50010;		// Alarm
-	controller->ioStatusAddr[IO_ROBOTSTATUS_ALARM_MINOR].ulAddr = 50011;		// Alarm
-	controller->ioStatusAddr[IO_ROBOTSTATUS_ALARM_SYSTEM].ulAddr = 50012;		// Alarm
-	controller->ioStatusAddr[IO_ROBOTSTATUS_ALARM_USER].ulAddr = 50013;			// Alarm
-	controller->ioStatusAddr[IO_ROBOTSTATUS_ERROR].ulAddr = 50014;				// Error
-	controller->ioStatusAddr[IO_ROBOTSTATUS_PLAY].ulAddr = 50054;				// Play
-	controller->ioStatusAddr[IO_ROBOTSTATUS_TEACH].ulAddr = 50053;				// Teach
-	controller->ioStatusAddr[IO_ROBOTSTATUS_REMOTE].ulAddr = 80011; //50056;	// Remote  // Modified E.M. 7/9/2013
-	controller->ioStatusAddr[IO_ROBOTSTATUS_OPERATING].ulAddr = 50070;			// Operating
-	controller->ioStatusAddr[IO_ROBOTSTATUS_HOLD].ulAddr = 50071;				// Hold
-	controller->ioStatusAddr[IO_ROBOTSTATUS_SERVO].ulAddr = 50073;   			// Servo ON
-	controller->ioStatusAddr[IO_ROBOTSTATUS_ESTOP_EX].ulAddr = 80025;   		// External E-Stop
-	controller->ioStatusAddr[IO_ROBOTSTATUS_ESTOP_PP].ulAddr = 80026;   		// Pendant E-Stop
-	controller->ioStatusAddr[IO_ROBOTSTATUS_ESTOP_CTRL].ulAddr = 80027;   		// Controller E-Stop
+	controller->ioStatusAddr[IO_ROBOTSTATUS_ALARM_MAJOR].ulAddr = MP_SOUT_MAJOR_ALARM_OCCUR;	// Alarm
+	controller->ioStatusAddr[IO_ROBOTSTATUS_ALARM_MINOR].ulAddr = MP_SOUT_MINOR_ALARM_OCCUR;	// Alarm
+	controller->ioStatusAddr[IO_ROBOTSTATUS_ALARM_SYSTEM].ulAddr = MP_SOUT_SYSTEM_ALARM_OCCUR;	// Alarm
+	controller->ioStatusAddr[IO_ROBOTSTATUS_ALARM_USER].ulAddr = MP_SOUT_USER_ALARM_OCCUR;		// Alarm
+	controller->ioStatusAddr[IO_ROBOTSTATUS_ERROR].ulAddr = MP_SOUT_ERROR_OCCUR;				// Error
+	controller->ioStatusAddr[IO_ROBOTSTATUS_PLAY].ulAddr = MP_SOUT_PLAY_MODE_SET;				// Play
+	controller->ioStatusAddr[IO_ROBOTSTATUS_TEACH].ulAddr = MP_SOUT_TEACH_MODE_SET;				// Teach
+	controller->ioStatusAddr[IO_ROBOTSTATUS_REMOTE].ulAddr = 80011; //50056;					// Remote  // Modified E.M. 7/9/2013
+	controller->ioStatusAddr[IO_ROBOTSTATUS_OPERATING].ulAddr = MP_SOUT_RUNNING;				// Operating
+	controller->ioStatusAddr[IO_ROBOTSTATUS_HOLD].ulAddr = MP_SOUT_HOLDING;						// Hold
+	controller->ioStatusAddr[IO_ROBOTSTATUS_SERVO].ulAddr = MP_SOUT_SERVO_ON;   				// Servo ON
+	controller->ioStatusAddr[IO_ROBOTSTATUS_EXT_SERVO_OFF1].ulAddr = MP_SIN_EXT_SERVO_OFF_1;   	// EXT Servo OFF 1
+	controller->ioStatusAddr[IO_ROBOTSTATUS_ESTOP_EX].ulAddr = 80025;   						// External E-Stop
+	controller->ioStatusAddr[IO_ROBOTSTATUS_ESTOP_PP].ulAddr = 80026;   						// Pendant E-Stop
+	controller->ioStatusAddr[IO_ROBOTSTATUS_ESTOP_CTRL].ulAddr = 80027;   						// Controller E-Stop
 	controller->ioStatusAddr[IO_ROBOTSTATUS_WAITING_ROS].ulAddr = IO_FEEDBACK_WAITING_MP_INCMOVE; // Job input signaling ready for external motion
-	controller->ioStatusAddr[IO_ROBOTSTATUS_INECOMODE].ulAddr = 50727;			// Energy Saving Mode
+	controller->ioStatusAddr[IO_ROBOTSTATUS_ROS_DONE].ulAddr = IO_FEEDBACK_MP_INCMOVE_DONE; 	// Job input signaling external motion done
+	controller->ioStatusAddr[IO_ROBOTSTATUS_INECOMODE].ulAddr = 50727;							// Energy Saving Mode
 #if (YRC1000||YRC1000u)
 	controller->ioStatusAddr[IO_ROBOTSTATUS_PFL_STOP].ulAddr = 81702;			// PFL function stopped the motion
 	controller->ioStatusAddr[IO_ROBOTSTATUS_PFL_ESCAPE].ulAddr = 81703;			// PFL function escape from clamping motion
@@ -506,6 +510,12 @@ BOOL Ros_Controller_IsServoOn(Controller* controller)
 	return ((controller->ioStatus[IO_ROBOTSTATUS_SERVO] != 0) && (controller->ioStatus[IO_ROBOTSTATUS_INECOMODE] == 0));
 }
 
+BOOL Ros_Controller_IsExtServoOff1(Controller* controller)
+{
+	return (controller->ioStatus[IO_ROBOTSTATUS_EXT_SERVO_OFF1] != 0);
+}
+
+
 BOOL Ros_Controller_IsEcoMode(Controller* controller)
 {
 	return (controller->ioStatus[IO_ROBOTSTATUS_INECOMODE] != 0);
@@ -523,13 +533,21 @@ BOOL Ros_Controller_IsWaitingRos(Controller* controller)
 	return ((controller->ioStatus[IO_ROBOTSTATUS_WAITING_ROS]!=0));
 }
 
+BOOL Ros_Controller_IsRosDone(Controller* controller)
+{
+	return ((controller->ioStatus[IO_ROBOTSTATUS_ROS_DONE]!=0));
+}
+
 BOOL Ros_Controller_IsMotionReady(Controller* controller)
 {
 	BOOL bMotionReady;
 	
-#ifndef DUMMY_SERVO_MODE	
+#ifndef DUMMY_SERVO_MODE
+	// check ROS_DONE == 0
+	// check explicitly that ROS_READY == 1
 	bMotionReady = controller->bRobotJobReady && Ros_Controller_IsOperating(controller) && Ros_Controller_IsRemote(controller)
-		&& !Ros_Controller_IsPflActive(controller) && !controller->bMpIncMoveError && !controller->bStopMotion;
+		&& !Ros_Controller_IsPflActive(controller) && !controller->bMpIncMoveError && !controller->bStopMotion
+		&& Ros_Controller_IsWaitingRos(controller) && !Ros_Controller_IsRosDone(controller);
 #else
 	bMotionReady = controller->bRobotJobReady && Ros_Controller_IsOperating(controller);
 #endif
@@ -718,7 +736,8 @@ BOOL Ros_Controller_StatusUpdate(Controller* controller)
 		{
 			if(controller->ioStatus[i] != ioStatus[i])
 			{
-				//printf("Change of ioStatus[%d]\r\n", i);
+				//TODO comment out
+				printf("Change of ioStatus[%d]\r\n", i);
 				
 				controller->ioStatus[i] = ioStatus[i];
 				switch(i)
@@ -784,8 +803,11 @@ BOOL Ros_Controller_StatusUpdate(Controller* controller)
 			}
 		}
 
-		if (!prevReadyStatus && Ros_Controller_IsMotionReady(controller))
-			printf("Robot job is ready for ROS commands.\r\n");
+		BOOL readyStatus = Ros_Controller_IsMotionReady(controller)
+		if (!prevReadyStatus && readyStatus)
+			printf("StatusUpdate: Robot job is ready for ROS commands\r\n");
+		else if (prevReadyStatus && !readyStatus)
+			printf("StatusUpdate: Robot job is not ready anymore\r\n");
 
 		return TRUE;
 	}
@@ -927,7 +949,7 @@ void Ros_Controller_ListenForSkill(Controller* controller, int sl)
 #endif
 
 			if(Ros_Controller_IsMotionReady(controller))
-				printf("Robot job is ready for ROS commands.\r\n");
+				printf("ListenForSkill: Robot job is ready for ROS commands\r\n");
 			break;
 			
 		case MP_SKILL_END:
