@@ -24,7 +24,7 @@ find_package(
     urdf
 )
 
-find_package(Boost REQUIRED COMPONENTS system thread)
+find_package(Boost CONFIG REQUIRED COMPONENTS thread)
 
 #######################################
 ## Adding directories and definitions #
