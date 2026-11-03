@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.22.0)
 project(motoman_ms210_moveit_config)
 
 find_package(catkin REQUIRED)
