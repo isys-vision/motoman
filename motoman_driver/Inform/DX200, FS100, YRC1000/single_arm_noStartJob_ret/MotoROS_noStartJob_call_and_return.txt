@@ -1,7 +1,6 @@
-This INIT_ROS.JBI shoudl be called from another Yaskawa Job.
+This INIT_ROS.JBI should be called from another Yaskawa Job.
 
 It will return to the caller when 'robot_disable' has been called.
- by setting some Input signals, or to give Mikado control over the robot.
 
 It is possible to immediately return if a given output is not set.
 
