@@ -104,42 +104,42 @@
         <child link="${prefix}link_1_s"/>
         <origin xyz="0 0 0.450" rpy="0 0 0" />
         <axis xyz="0 0 1" />
-        <limit lower="-2.9670" upper="2.9670" effort="926.10" velocity="4.5355"/>
+        <limit lower="-2.9670" upper="2.9670" effort="926.10" velocity="4.5378"/>
     </joint>
     <joint name="${prefix}joint_2_l" type="revolute">
         <parent link="${prefix}link_1_s"/>
         <child link="${prefix}link_2_l"/>
         <origin xyz="0.155 0 0" rpy="0 0 0" />
         <axis xyz="0 1 0" />
-        <limit lower="-1.5708" upper="2.7052" effort="1029.00" velocity="4.0132"/>
+        <limit lower="-1.5707" upper="2.7052" effort="1029.00" velocity="4.0142"/>
     </joint>
     <joint name="${prefix}joint_3_u" type="revolute">
         <parent link="${prefix}link_2_l"/>
         <child link="${prefix}link_3_u"/>
         <origin xyz="0 0 0.614" rpy="0 0 0" />
         <axis xyz="0 -1 0" />
-        <limit lower="-1.4835" upper="2.6179" effort="551.25" velocity="4.5375"/>
+        <limit lower="-1.4835" upper="2.7052" effort="551.25" velocity="4.5378"/>
     </joint>
     <joint name="${prefix}joint_4_r" type="revolute">
         <parent link="${prefix}link_3_u"/>
         <child link="${prefix}link_4_r"/>
         <origin xyz="0.640 0 0.200" rpy="0 0 0" />
         <axis xyz="-1 0 0" />
-        <limit lower="-3.4906" upper="3.4906" effort="89.96" velocity="8.2007"/>
+        <limit lower="-3.4906" upper="3.4906" effort="89.96" velocity="8.2030"/>
     </joint>
     <joint name="${prefix}joint_5_b" type="revolute">
         <parent link="${prefix}link_4_r"/>
         <child link="${prefix}link_5_b"/>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <axis xyz="0 -1 0" />
-        <limit lower="-2.6179" upper="2.6179" effort="67.03" velocity="8.1992"/>
+        <limit lower="-2.6179" upper="2.6179" effort="67.03" velocity="8.2030"/>
     </joint>
     <joint name="${prefix}joint_6_t" type="revolute">
         <parent link="${prefix}link_5_b"/>
         <child link="${prefix}link_6_t"/>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <axis xyz="-1 0 0" />
-        <limit lower="-7.9412" upper="7.9412" effort="33.30" velocity="12.2143"/>
+        <limit lower="-7.9412" upper="7.9412" effort="33.30" velocity="12.2173"/>
     </joint>
     <joint name="${prefix}joint_6_t-tool0" type="fixed">
         <origin xyz="0.100 0 0" rpy="3.1415926 -1.570796 0"/>
