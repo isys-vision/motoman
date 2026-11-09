@@ -33,6 +33,7 @@
 #include "motoman_driver/industrial_robot_client/joint_trajectory_interface.h"
 #include "motoman_driver/industrial_robot_client/motoman_utils.h"
 #include "simple_message/joint_traj_pt.h"
+#include <industrial_robot_client/utils.h>
 #include "industrial_utils/param_utils.h"
 #include <vector>
 #include <map>
@@ -687,8 +688,13 @@ bool JointTrajectoryInterface::is_valid(trajectory_msgs::JointTrajectory &traj)
     }
 
     // check for valid timestamp
-    if ((i > 0) && (pt.time_from_start.toSec() == 0))
+    if ((i > 0) && (pt.time_from_start.toSec() == 0) &&
+        ((pt.time_from_start != traj.points[i - 1].time_from_start) ||
+         !industrial_robot_client::utils::isWithinRange(pt.positions, traj.points[i - 1].positions, 0.0001)))
+    {
+      // not an error if there are additional copies after the starting point
       ROS_ERROR_RETURN(false, "Validation failed: Missing valid timestamp data for trajectory pt %lu", i);
+    }
   }
 
   return true;
@@ -717,8 +723,15 @@ bool JointTrajectoryInterface::is_valid(motoman_msgs::DynamicJointTrajectory &tr
       }
 
       // check for valid timestamp
-      if ((i > 0) && (pt.time_from_start.toSec() == 0))
+      if ((i > 0) && (pt.time_from_start.toSec() == 0) &&
+          ((gr >= traj.points[i - 1].num_groups) ||
+           (pt.time_from_start != traj.points[i - 1].groups[gr].time_from_start) ||
+           !industrial_robot_client::utils::isWithinRange(pt.positions, traj.points[i - 1].groups[gr].positions,
+                                                          0.0001)))
+      {
+        // not an error if there are additional copies after the starting point
         ROS_ERROR_RETURN(false, "Validation failed: Missing valid timestamp data for trajectory pt %lu", i);
+      }
     }
   }
   return true;
